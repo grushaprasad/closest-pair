@@ -1,0 +1,188 @@
+import java.util.*;
+import java.awt.geom.Point2D;
+
+public class PointPair{
+  private Point2D.Double [] points;
+  private Point2D.Double [] b;
+  
+  public PointPair (Point2D.Double [] points) {
+    this.points = points;
+    //Point2D.Double [] b = new Point2D.Double [points.length];
+  }
+  
+  
+  /// SORTING ALGORITHMS
+  
+  
+  public void mergeSortVertical(Point2D.Double [] points, Point2D.Double [] b, int lo, int hi) {
+    if (hi <= lo) return;
+    else {
+      int mid = (lo+hi)/2;
+      mergeSortVertical(points, b, lo, mid);
+      mergeSortVertical(points, b, mid+1, hi);
+      mergeVertical(points, lo, mid, mid+1, hi);
+    }
+    Point2D.Double []t = points;
+    points = b;
+    b = t;
+  }
+  
+ public void mergeVertical (Point2D.Double [] points, int lo1, int hi1, int lo2, int hi2) {
+ // lo1 is the lowes
+   Point2D.Double []b = new Point2D.Double[hi2-lo1 +1];
+   int i = lo1;    //next position in bottom half
+   int j = lo2;    // next position in top half
+   int k = 0;  // position in array b that gets filled. 
+   while (i <= hi1 && j<= hi2) {
+     if (points[i].getX() < points[j].getX()) b[k++] = points[i++];
+     else b[k++] = points [j++];
+   }
+   while (i <= hi1) { 
+     b[k++] = points[i++]; 
+   }
+   while (j <= hi2) {
+     b[k++] = points[j++];
+   }
+   for (int l = 0; l < k; l++) points[lo1++] = b[l]; 
+   
+ }
+ 
+ public Point2D.Double [] SortVertical () {
+   Point2D.Double [] b = new Point2D.Double [points.length];
+   this.mergeSortVertical(points, b, 0, points.length-1);
+   return points;
+ }
+ 
+ 
+ 
+ public void mergeSortHorizontal(Point2D.Double [] points, Point2D.Double [] b, int lo, int hi) {
+   if (hi <= lo) return;
+   else {
+     int mid = (lo+hi)/2;
+     mergeSortHorizontal(points, b, lo, mid);
+     mergeSortHorizontal(points, b, mid+1, hi);
+     mergeHorizontal(points, lo, mid, mid+1, hi);
+   }
+   Point2D.Double []t = points;
+   points = b;
+   b = t;
+ }
+ 
+ 
+  public void mergeHorizontal (Point2D.Double [] points, int lo1, int hi1, int lo2, int hi2) {
+    // lo1 is the lowes
+    Point2D.Double []b = new Point2D.Double[hi2-lo1 +1];
+    int i = lo1;    //next position in bottom half
+    int j = lo2;    // next position in top half
+    int k = 0;  // position in array b that gets filled. 
+    while (i <= hi1 && j<= hi2) {
+      if (points[i].getY() < points[j].getY()) b[k++] = points[i++];
+      else b[k++] = points [j++];
+    }
+    while (i <= hi1) { 
+      b[k++] = points[i++]; 
+    }
+    while (j <= hi2) {
+      b[k++] = points[j++];
+    }
+    for (int l = 0; l < k; l++) points[lo1++] = b[l]; 
+    
+  }
+  
+  public Point2D.Double [] SortHorizontal () {
+    Point2D.Double [] b = new Point2D.Double [points.length];
+    this.mergeSortHorizontal(points, b, 0, points.length-1);
+    return points;
+  }
+  
+  
+  // BINARY SEARCH
+  public int BinarySearch (Point2D.Double [] a, Point2D.Double b, int min, int max) {
+   // int pos = 0;
+    if (max < min) return -1;
+    int mid = (min+max)/2;
+    if (b.equals(a[mid])) return mid;
+    else if (b.getY() < a[mid].getY()) return BinarySearch(a, b, min, mid-1);
+    else return BinarySearch(a,b, mid+1, max);
+    //return  pos;
+  } 
+  
+  
+  /// CREATING AN ARRAY TO MATCH XSORTED WITH YSORTED
+  
+  public int [] MatchYtoX (Point2D.Double [] x, Point2D.Double [] y) {   //Gives an array that has for all the elements in SortedX, the order they appear in SortedY
+    int [] matched = new int[x.length];
+    for (int i = 0; i < x.length; i++) {
+      matched[i] = BinarySearch(y, x[i], 0, x.length-1);
+    }
+    return matched;
+  }
+      
+    
+  
+  
+  
+  /// CALCULATING DISTANCE BETWEEN POINTS
+  
+  public double CalcDist (Point2D.Double p1, Point2D.Double p2) {
+    return Math.sqrt(Math.pow(p1.x - p2.x, 2) + Math.pow(p1.y - p2.y, 2));
+  }
+  
+  public double ClosestOfThreePoints (Point2D.Double [] x) {
+    double shortDist = 0;
+    if (x.length == 3) {
+      double a = Math.abs(CalcDist (x[0], x[1]));
+      double b = Math.abs(CalcDist (x[1], x[2]));
+      double c = Math.abs(CalcDist (x[2], x[0]));
+      shortDist = Math.max (Math.max(a,b), c);
+    }
+    
+    else if (x.length == 2) shortDist = Math.abs(CalcDist (x[0], x[1]));   
+    return shortDist;
+    
+  }
+  
+  
+  
+  
+  /// THE RECURSIVE FUNCTION
+  
+ public String ClosestPoints (Point2D.Double [] sortedX, Point2D.Double [] sortedY, int[] matchedYtoX) {
+    if (sortedX.length <= 3) ClosestOfThreePoints(sortedX);
+    else {
+      
+      //Preparing the sub arrays from X   O(2n) = O(n)
+      int midx = sortedX.length/2;
+      Point2D.Double [] firstHalf = new Point2D.Double[midx];
+      for (int i = 0; i < midx; i++) {
+        firstHalf[i] = sortedX[i];
+      }
+      
+      Point2D.Double [] secondHalf = new Point2D.Double[midx+1];
+      for (int j = midx; j<secondHalf.length; j++) {
+        secondHalf[j] = sortedX[j];
+      }
+      
+      //Preparing the sub arrays from Y 
+      /*int midy = sortedY.length/2;
+      Point2D.Double [] firstHalfY = new Point2D.Double[midY]; */
+      
+      //Preparing the sub arrays from Y
+      
+      Point2D.Double firstHalfY = new Point2D.Double[firstHalf.length];
+      for (int i = 1; i<firstHalf.length; i++) {
+        firstHalfY[i] = firstHalf[matchedYtoX [i]];   // Does this work?? What I need is the corresponding 
+      
+      
+      
+      
+      
+    }
+      
+      
+      return "";
+ }
+      
+        
+   
+}

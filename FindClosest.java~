@@ -1,0 +1,79 @@
+import java.util.*;
+import java.awt.geom.Point2D;
+
+public class FindClosest
+{
+  public static void main(String[] args)
+  {
+    Scanner scan = new Scanner(System.in);
+
+ // read number of points and make arrays
+    int numPoints = scan.nextInt();
+    Point2D.Double[] points = new Point2D.Double[numPoints];
+    Point2D.Double[] pointsX = new Point2D.Double[numPoints];
+    Point2D.Double[] pointsY = new Point2D.Double[numPoints];
+
+ // read points and add to array
+    for (int p = 0; p < numPoints; p++)
+    {
+      points[p] = new Point2D.Double(scan.nextDouble(), scan.nextDouble());
+    }
+    
+    for (int p = 0; p< points.length; p++) {
+      pointsX[p] = points[p];
+      pointsY[p] = points[p];
+    }
+      
+    
+    
+    /// TESTING STUFF
+    
+   /* //System.out.println(PointSet.closestPair(points));
+    sort x  = new sort(points);
+    Point2D.Double[] sortedX = x.SortVertical() ;
+    for (Point2D.Double a : sortedX) {
+      System.out.println(a);
+    }
+    Point2D.Double [] sortedY = x.SortHorizontal();   
+    System.out.println();
+    System.out.println();
+    
+    for (Point2D.Double a : sortedY) {
+      System.out.println(a);
+    }
+    
+    
+  }*/
+  
+  
+    PointPair x = new PointPair(pointsX);
+    PointPair y = new PointPair(pointsY);
+    PointPair z = new PointPair(points);
+    
+   Point2D.Double[] sortedX = x.SortVertical() ;
+    for (Point2D.Double a : sortedX) {
+      System.out.println(a);
+    }
+    Point2D.Double [] sortedY = y.SortHorizontal();   
+    System.out.println();
+    System.out.println();
+    
+    for (Point2D.Double a : sortedY) {
+      System.out.println(a);
+    }
+    
+    System.out.println(); 
+    System.out.println();
+    
+
+    
+    int [] a = x.MatchYtoX(x.SortVertical(), y.SortHorizontal());
+    for (int b: a) System.out.print(b + " ");
+    System.out.println();
+    
+    Point2D.Double test = new Point2D.Double(-5.99040859814167, 0.3345270764350783);
+    System.out.println("point test occurs at pos " + z.BinarySearch(points, test , 0, points.length-1));
+    
+   // System.out.println("the distance between " + points[0] + " and " + points[1] + " is " +x.CalcDist(points[0], points[1]));
+  }
+}
